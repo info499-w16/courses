@@ -3,7 +3,7 @@ Provides service for adding, removing, and updating course information
 
 ## Entities
 
-### Course <a id="course"></a>
+### Course
 | Key | Type | Value|
 |-----|------|------|
 |title| String| Introduction to web development |
@@ -18,7 +18,7 @@ Provides service for adding, removing, and updating course information
 
 ## API
 
-### POST `/`
+### POST `/course`
 
 Creates a new course with the body containing all of the information
 
@@ -36,7 +36,7 @@ Creates a new course with the body containing all of the information
 |404| Teacher not found |
 |404| TA not found |
 
-### GET `/{id}`
+### GET `/course/{id}`
 
 Fetches information about a given course offering which matches the specified ID
 
@@ -45,10 +45,11 @@ Fetches information about a given course offering which matches the specified ID
 | HTTP Code | Response|
 |-----------|---------|
 |200|[Course](#course).id|
+|400| Bad Request |
 |401| Admin Required |
 |404| Course Not Found |
 
-### PUT `/{id}`
+### PUT `/course/{id}`
 
 Updates a course with new information
 
@@ -60,9 +61,10 @@ Updates a course with new information
 | HTTP Code | Response|
 |-----------|---------|
 |200|[Course](#course).id|
+|400| Bad Request |
 |401| Admin Required |
 
-### DELETE `/{id}`
+### DELETE `/course/{id}`
 Removes a given course from the database
 
 #### Reply
@@ -70,11 +72,11 @@ Removes a given course from the database
 | HTTP Code | Response|
 |-----------|---------|
 |200|Course Deleted|
+|400| Bad Request |
 |401| Admin Required |
 |404| Course Not Found|
 
-
-### GET `/registered/{userID}`
+### GET `/student/{userID}/courses`
 
 Get back a list of courses that a user is registered for
 
@@ -83,10 +85,11 @@ Get back a list of courses that a user is registered for
 | HTTP Code | Response|
 |-----------|---------|
 |200|[[Courses](#course)]|
+|400| Bad Request |
 |401| Teacher Required |
-|404| User Not Found |
+|404| Student Not Found |
 
-### PUT `/registered/{userID}/{courseId}`
+### POST `/student/{userID}/{courseId}`
 
 Adds a user to the registry for a given course
 
@@ -98,11 +101,12 @@ Adds a user to the registry for a given course
 | HTTP Code | Response|
 |-----------|---------|
 |200| User Added|
+|400| Bad Request |
 |401| Admin Required |
 |404| User Not Found |
 |404| Course Not Found |
 
-### DELETE `/registered/{userID}/{courseId}`
+### DELETE `/student/{userID}/{courseId}`
 Removes a user from the registry of a given course
 
 #### Reply
@@ -110,6 +114,21 @@ Removes a user from the registry of a given course
 | HTTP Code | Response|
 |-----------|---------|
 |200| User Removed|
+|400| Bad Request |
 |401| Admin Required |
 |404| User Not Found |
 |404| Course Not Found |
+
+### GET `/teacher/{userId}/courses`
+Retrieves the list of courses that the teacher is a teacher of
+
+#### Reply
+| HTTP Code | Response|
+|-----------|---------|
+|200| [ [Courses](#course) ]|
+|400| Bad Request |
+|401| Teacher Required |
+|404| User Not Found |
+|404| Course Not Found |
+
+
