@@ -1,7 +1,10 @@
 import {default as Knex} from 'knex'
 
+export {createTables}
+
 const DB_PASSWORD = process.env.DB_PASSWORD
 if (!DB_PASSWORD) {
+  console.log(process.env.DB_PASSWORD)
   throw new Error('DB_PASSWORD env variable not set!')
 }
 
@@ -13,19 +16,16 @@ const knex = Knex({
     password: DB_PASSWORD,
     database: 'courses'
   }
-}).catch(err => {
-  console.log('Could not connect to database, please check connection settings')
-  throw err
 })
 
 // Tables
 function buildCourses () {
   return knex.schema.createTableIfNotExists('courses', function (table) {
-    table.increments() // Creates auto-incrementing ID
+    table.increments('id') // Creates auto-incrementing ID
     table.string('name')
     table.text('description')
     table.string('curriculum')
-    table.int('courseNum')
+    table.integer('courseNum')
     table.string('year')
     table.string('quarter')
     table.timestamps()
@@ -60,24 +60,22 @@ function buildStudentCourses () {
 // For determining what courses a teacher has
 function buildTeacherCourses () {
   return knex.schema.createTableIfNotExists('teacherCourses', function (table) {
-    table.string('studentId').notNullable().references('students.id')
+    table.string('teacherId').notNullable().references('teacher.id')
     table.string('courseId').notNullable().references('courses.id')
-    table.primary(['studentId', 'courseId'])
+    table.primary(['teacherId', 'courseId'])
   })
 }
 
 // Returns a function that connects to the db and creates all tables if they don't exist
 function createTables () {
-  return knex
-    .then(() => {
-      return Promise.all([buildCourses(), buildTeachers(), buildStudents()])
-    })
+  return Promise.all([buildCourses(), buildTeachers(), buildStudents()])
     .then(() => {
       // Junction tables have to be created AFTER the main tables
       return Promise.all([buildStudentCourses(), buildTeacherCourses()])
     })
     .catch(err => {
       console.log('Uh oh, encountered db error!')
+      console.log(err)
       throw err
     })
 }
