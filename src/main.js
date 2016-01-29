@@ -1,19 +1,16 @@
 import {default as koa} from 'koa'
-import {default as koaRouter} from 'koa-router'
 import {default as bodyParser} from 'koa-bodyparser'
 
+// Get routes
+import {course} from './routes'
+
 const app = koa()
-const router = koaRouter()
 
 const PORT = process.env.PORT || 3000
 
-router.get('/', function *(next) {
-  this.body = 'Hello World!'
-})
-
 app
   .use(bodyParser()) // Body parsing middleware
-  .use(router.routes())
-  .use(router.allowedMethods())
+  .use(course.routes())
+  .use(course.allowedMethods())
 
 app.listen(PORT)

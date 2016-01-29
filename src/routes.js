@@ -1,8 +1,6 @@
 import {default as Router} from 'koa-router'
 
-export {course, teacher, student}
-
-const course = new Router({
+export const course = new Router({
   // Prefixes the entire router with /course
   prefix: '/course'
 })
@@ -21,7 +19,7 @@ course
 
   })
 
-const teacher = new Router({
+export const teacher = new Router({
   prefix: '/teacher'
 })
 
@@ -36,7 +34,7 @@ teacher
 
   })
 
-const student = new Router({
+export const student = new Router({
   prefix: '/student'
 })
 
