@@ -7,13 +7,15 @@ export const course = new Router({
 
 course
   .post('/', function *(next) {
-
+    this.body = this.request.body
   })
   .get('/:id', function *(next) {
-
+    this.body = {
+      'courseID': this.params.id
+    }
   })
   .put('/:id', function *(next) {
-
+    this.body
   })
   .delete('/:id', function *(next) {
 
@@ -25,7 +27,10 @@ export const teacher = new Router({
 
 teacher
   .post('/:id/courses/:courseId', function *(next) {
-
+    this.body = {
+      teacherId: this.params.id,
+      courseId: this.params.courseId
+    }
   })
   .get('/:id/courses', function *(next) {
 

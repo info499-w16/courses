@@ -2,7 +2,7 @@ import {default as koa} from 'koa'
 import {default as bodyParser} from 'koa-bodyparser'
 
 // Get routes
-import {course} from './routes'
+import {course, teacher, student} from './routes'
 
 import {default as heartbeat} from './heartbeat'
 
@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 3000
 app
   .use(bodyParser()) // Body parsing middleware
   .use(course.routes())
-  .use(course.allowedMethods())
+  .use(teacher.routes())
+  .use(student.routes())
 
 app.listen(PORT)
 
