@@ -1,5 +1,6 @@
 import {default as koa} from 'koa'
 import {default as koaRouter} from 'koa-router'
+import {default as bodyParser} from 'koa-bodyparser'
 
 const app = koa()
 const router = koaRouter()
@@ -11,6 +12,7 @@ router.get('/', function *(next) {
 })
 
 app
+  .use(bodyParser()) // Body parsing middleware
   .use(router.routes())
   .use(router.allowedMethods())
 
