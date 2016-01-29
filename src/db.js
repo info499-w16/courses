@@ -34,14 +34,16 @@ function buildCourses () {
 
 function buildStudents () {
   return knex.schema.createTableIfNotExists('students', function (table) {
-    table.string('id').unique().notNullable().primary()
+    table.increments('id')
+    table.string('googleId').unique().notNullable()
     table.timestamps()
   })
 }
 
 function buildTeachers () {
   return knex.schema.createTableIfNotExists('teachers', function (table) {
-    table.string('id').unique().notNullable().primary()
+    table.increments('id')
+    table.string('googleId').unique().notNullable()
     table.timestamps()
   })
 }
@@ -51,8 +53,8 @@ function buildTeachers () {
 // For determining what courses a student has and vice versa
 function buildStudentCourses () {
   return knex.schema.createTableIfNotExists('studentCourses', function (table) {
-    table.string('studentId').notNullable().references('students.id')
-    table.string('courseId').notNullable().references('courses.id')
+    table.integer('studentId').notNullable().references('students.id')
+    table.integer('courseId').notNullable().references('courses.id')
     table.primary(['studentId', 'courseId'])
   })
 }
@@ -60,8 +62,8 @@ function buildStudentCourses () {
 // For determining what courses a teacher has
 function buildTeacherCourses () {
   return knex.schema.createTableIfNotExists('teacherCourses', function (table) {
-    table.string('teacherId').notNullable().references('teacher.id')
-    table.string('courseId').notNullable().references('courses.id')
+    table.integer('teacherId').notNullable().references('teachers.id')
+    table.integer('courseId').notNullable().references('courses.id')
     table.primary(['teacherId', 'courseId'])
   })
 }
