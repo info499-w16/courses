@@ -8,6 +8,9 @@ import {default as heartbeat} from './heartbeat'
 
 const app = koa()
 
+const NAME = 'courses'
+const VERSION = '0.0.1'
+
 const PORT = process.env.PORT || 3000
 
 app
@@ -19,4 +22,4 @@ app
 app.listen(PORT)
 
 // Send beat data
-heartbeat()
+heartbeat(NAME, VERSION)

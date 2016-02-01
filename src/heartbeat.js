@@ -1,30 +1,52 @@
 import {default as dgram} from 'dgram'
 import {default as uuid} from 'uuid'
 
-const REGISTRATION_PORT = process.env.REGISTRATION_PORT || 8888
-const HEART_RATE = process.env.REGISTRATION_PORT || 1000 * 30
-
-const NAME = 'courses'
-const VERSION = '0.0.1'
+export {getPylon}
 
 const client = dgram.createSocket('udp4')
-export default function heartbeat () {
-  client.bind(REGISTRATION_PORT, () => {
+export default function heartbeat (name, version, heartRate = 30000, port = 8888) {
+  client.bind(port, () => {
     client.setBroadcast(true)
 
     const instanceData = JSON.stringify({
-      name: NAME,
-      version: VERSION,
+      name,
+      version,
       id: uuid.v4()
     })
 
     function sendRegistrationData () {
-      client.send(instanceData, 0, instanceData.length, REGISTRATION_PORT, '255.255.255.255', (err) => {
+      client.send(instanceData, 0, instanceData.length, port, '255.255.255.255', (err) => {
         if (err) throw err
       })
     }
 
     sendRegistrationData()
-    setInterval(sendRegistrationData, HEART_RATE)
+    setInterval(sendRegistrationData, heartRate)
   })
 }
+
+// Listen for pylon broadcast to make a request
+const PYLON_PORT = process.env.PYLON_PORT || 9999
+
+var pylonAddress
+
+const pylonListener = dgram.createSocket('udp4')
+pylonListener.on('error', (err) => {
+  console.log(`Registry error:\n${err.stack}`)
+  pylonListener.close()
+})
+
+pylonListener.on('message', (msg, rinfo) => {
+  console.log(`Recieved pylon broadcast from ${rinfo.address}:${rinfo.port}`)
+  // Set pylon's address to the value recieved
+  pylonAddress = rinfo.address
+})
+
+pylonListener.on('listening', () => {
+  var address = pylonListener.address()
+  console.log(`Waiting for pylon broadcast: listening ${address.address}:${address.port}`)
+})
+
+pylonListener.bind(PYLON_PORT)
+
+function getPylon () { return pylonAddress }

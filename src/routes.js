@@ -10,6 +10,7 @@ course
     this.body = this.request.body
   })
   .get('/:id', function *(next) {
+    // Gets data about the course
     this.body = {
       'courseID': this.params.id
     }
