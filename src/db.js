@@ -77,15 +77,18 @@ function createTables () {
 // Adds a new course to the databse
 // Returns the created course's id
 function addCourse (course) {
-  course.created_at = new Date()
-  return knex(COURSES_TABLE)
-    .insert(course, 'id')
+  return rp(`${getPylon()}/users/${course.teacher_id}`)
+    .then(() => {
+      course.created_at = new Date()
+      return knex(COURSES_TABLE)
+        .insert(course, 'id')
+    })
 }
 
 // Adds the student to the course
 function addStudent (courseId, studentId) {
   // Check that the student exists
-  rp(`${getPylon()}/users/${studentId}`)
+  return rp(`${getPylon()}/users/${studentId}`)
     // 200 If exists
     .then(() => {
       // Continue now that we know the student is real
