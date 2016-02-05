@@ -18,7 +18,7 @@ course.post('/', function *(next) {
 
 course.get('/:id', function *(next) {
   // Gets a course with the selected id
-  yield db.getCourse(this.id)
+  yield db.getCourse(this.params.id)
     .then(course => {
       this.body = course
     })

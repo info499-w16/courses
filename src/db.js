@@ -77,6 +77,7 @@ function createTables () {
 // Adds a new course to the databse
 // Returns the created course's id
 function addCourse (course) {
+  course.created_at = new Date()
   return knex(COURSES_TABLE)
     .insert(course, 'id')
 }
