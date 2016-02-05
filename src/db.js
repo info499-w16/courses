@@ -20,61 +20,44 @@ const knex = Knex({
 
 // Tables
 function buildCourses () {
-  return knex.schema.createTableIfNotExists('courses', function (table) {
-    table.increments('id') // Creates auto-incrementing ID
-    table.string('name')
-    table.text('description')
-    table.string('curriculum')
-    table.integer('courseNum')
-    table.string('year')
-    table.string('quarter')
-    table.timestamps()
+  return knex.schema.hasTable('users').then(exists => {
+    if (!exists) {
+      return knex.schema.createTable('courses', function (table) {
+        table.increments('id') // Creates auto-incrementing ID
+        table.string('name').notNullable()
+        table.text('description')
+        table.string('curriculum').notNullable()
+        table.integer('course_num').notNullable()
+        table.string('year').notNullable()
+        table.string('quarter').notNullable()
+        table.integer('teacher_id').notNullable()
+        table.integer('ta_id')
+        table.timestamps()
+      })
+    }
   })
 }
 
-function buildStudents () {
-  return knex.schema.createTableIfNotExists('students', function (table) {
-    table.increments('id')
-    table.string('googleId').unique().notNullable()
-    table.timestamps()
-  })
-}
-
-function buildTeachers () {
-  return knex.schema.createTableIfNotExists('teachers', function (table) {
-    table.increments('id')
-    table.string('googleId').unique().notNullable()
-    table.timestamps()
-  })
-}
-
-// Junction tables
-
-// For determining what courses a student has and vice versa
+// Junction table
 function buildStudentCourses () {
-  return knex.schema.createTableIfNotExists('studentCourses', function (table) {
-    table.integer('studentId').notNullable().references('students.id')
-    table.integer('courseId').notNullable().references('courses.id')
-    table.primary(['studentId', 'courseId'])
-  })
-}
-
-// For determining what courses a teacher has
-function buildTeacherCourses () {
-  return knex.schema.createTableIfNotExists('teacherCourses', function (table) {
-    table.integer('teacherId').notNullable().references('teachers.id')
-    table.integer('courseId').notNullable().references('courses.id')
-    table.primary(['teacherId', 'courseId'])
+  return knex.schema.hasTable('student_courses').then(exists => {
+    if (!exists) {
+      return knex.schema.createTableIfNotExists('student_courses', function (table) {
+        table.integer('student_id').notNullable()
+        table.integer('course_id')
+          .notNullable()
+          .references('id')
+          .inTable('courses')
+        table.primary(['student_id', 'course_id'])
+        table.timestamps()
+      })
+    }
   })
 }
 
 // Returns a function that connects to the db and creates all tables if they don't exist
 function createTables () {
-  return Promise.all([buildCourses(), buildTeachers(), buildStudents()])
-    .then(() => {
-      // Junction tables have to be created AFTER the main tables
-      return Promise.all([buildStudentCourses(), buildTeacherCourses()])
-    })
+  return buildCourses().then(() => buildStudentCourses())
     .catch(err => {
       console.log('Uh oh, encountered db error!')
       console.log(err)
