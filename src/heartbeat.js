@@ -28,7 +28,7 @@ export default function heartbeat (name, version, heartRate = 30000, port = 8888
 // Listen for pylon broadcast to make a request
 const PYLON_PORT = process.env.PYLON_PORT || 9999
 
-var pylonAddress
+let pylonAddress
 
 const pylonListener = dgram.createSocket('udp4')
 pylonListener.on('error', (err) => {
@@ -49,4 +49,4 @@ pylonListener.on('listening', () => {
 
 pylonListener.bind(PYLON_PORT)
 
-function getPylon () { return pylonAddress }
+function getPylon () { return `http://${pylonAddress}` }

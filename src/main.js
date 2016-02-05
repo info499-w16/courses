@@ -22,8 +22,6 @@ createTables()
     app
       .use(bodyParser()) // Body parsing middleware
       .use(course.routes())
-      .use(teacher.routes())
-      .use(student.routes())
 
     app.listen(PORT)
     console.log(`Course registry listening on port: ${PORT}`)
