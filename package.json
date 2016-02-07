@@ -11,6 +11,7 @@
   "keywords": [
     "microservice"
   ],
+  "repository": "info499-w16/courses",
   "author": "Caleb Thorsteinson",
   "license": "MIT",
   "devDependencies": {
